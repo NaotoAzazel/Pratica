@@ -7,7 +7,7 @@ export default {
   async execute(message) {
     const { channelIds } = getJSONData("blacklistChannels.json");
     const blacklistChannels = new Set(channelIds);
-    if(blacklistChannels.has(message.channel.id) || message.author.bot) return;
+    if(blacklistChannels.has(message.channel.id) || message.author.bot || message.type == 7) return;
 
     try {
       const authorId = String(message.author.id);

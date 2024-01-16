@@ -8,7 +8,7 @@ export default {
   
   async execute(interaction) {
     try {
-      const authorId = String(interaction.user.id); 
+      const authorId = interaction.user.id; 
 
       const filter = { userId: authorId };
       const { coins } = await profileSchema.findOne(filter);
