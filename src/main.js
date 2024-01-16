@@ -20,7 +20,6 @@ export const client = new Client({
 client.commands = new Collection();
 
 client.login(token).then(() => {
-  console.log("Bot online");
   setupMongoose(mongoUrl);
   loadEvents(client);
   loadCommands(client);

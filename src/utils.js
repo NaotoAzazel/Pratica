@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import fs from "fs";
 
 export function setupMongoose(mongoUrl) {
   mongoose
@@ -10,3 +11,5 @@ export function setupMongoose(mongoUrl) {
       console.log(err);
     });
 }
+
+export const getJSONData = (path) => JSON.parse(fs.readFileSync(path));
