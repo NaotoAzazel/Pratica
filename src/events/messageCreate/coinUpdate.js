@@ -17,7 +17,7 @@ export default {
         await profileSchema.create({ userId: authorId });
       } else {
         const filter = { userId: authorId };
-        const update = { $inc: { coins: 0.3 } };
+        const update = { $inc: { coins: 0.5 } };
 
         await profileSchema.findOneAndUpdate(filter, update, { new: true });
       }

@@ -14,7 +14,8 @@ export default {
     const leaderboardEmbed = new EmbedBuilder()
       .setTitle("Список лидеров")
       .setColor(2829617)
-      .setDescription({ text: "У вас еще нет ранга" })
+      .setDescription("У вас еще нет ранга")
+      .setThumbnail(interaction.guild.iconURL())
 
     try {
       const users = await profileSchema
@@ -23,9 +24,7 @@ export default {
         .catch((err) => console.log("Error while fetching users", err));
   
       const usersIndex = users.findIndex((member) => member.userId === id);
-      leaderboardEmbed.setDescription({
-        text: `${username}, ваша позиция в топе: ${usersIndex + 1}`
-      });
+      leaderboardEmbed.setDescription(`**${username}**, ваша позиция в топе: **${usersIndex + 1}**`);
   
       const topTen = users.slice(0, 10);
   
@@ -44,7 +43,7 @@ export default {
           const userBalance = userProfile.coins;
           leaderboardEmbed.addFields({ 
             name: `#${i + 1}. **${user.username}**`, 
-            value: `Всего монет: ${String(userBalance)}` 
+            value: `Всего монет: ${String(userBalance)} :coin:` 
           });
         } catch (err) {
           console.log("Error while fetching user:", err);
