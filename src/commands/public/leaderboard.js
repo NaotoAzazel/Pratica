@@ -1,5 +1,5 @@
 import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
-import profileSchema from "../../schema/profileSchema.js";
+import UserService from "../../service/UserService.js";
 
 export default {
   data: new SlashCommandBuilder()
@@ -18,11 +18,8 @@ export default {
       .setThumbnail(interaction.guild.iconURL())
 
     try {
-      const users = await profileSchema
-        .find()
-        .sort({ coins: -1 })
-        .catch((err) => console.log("Error while fetching users", err));
-  
+      const users = await UserService.getUsersSortedByCoins();
+      
       const usersIndex = users.findIndex((member) => member.userId === id);
       leaderboardEmbed.setDescription(`**${username}**, ваша позиция в топе: **${usersIndex + 1}**`);
   
@@ -43,7 +40,7 @@ export default {
           const userBalance = userProfile.coins;
           leaderboardEmbed.addFields({ 
             name: `#${i + 1}. **${user.username}**`, 
-            value: `Всего монет: ${String(userBalance)} :coin:` 
+            value: `Всего монет: ${userBalance} :coin:` 
           });
         } catch (err) {
           console.log("Error while fetching user:", err);

@@ -13,6 +13,15 @@ export default new class UserService {
     return fetchedUser?.coins;
   }
 
+  async getUsersSortedByCoins() {
+    const users = await profileSchema
+      .find()
+      .sort({ coins: -1 })
+      .catch((err) => { throw new Error("Error while fetching all users") });
+
+    return users;
+  }
+
   /**
    * @param {string} [operationType='increment'] - Тип операции ("increment", "set", "decrement")
   */
