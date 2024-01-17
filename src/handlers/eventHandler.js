@@ -24,7 +24,7 @@ export default async function loadEvents(client) {
       const eventExecute = (...args) => event.execute(...args, client);
     
       eventListener[event.once ? "once" : "on"](event.name, eventExecute);
-      table.addRow(file, 'successfully loaded');
+      table.addRow(file, 'loaded');
     }
   }
 
