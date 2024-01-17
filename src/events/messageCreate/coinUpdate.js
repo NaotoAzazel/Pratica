@@ -1,5 +1,5 @@
-import profileSchema from "../../schema/profileSchema.js";
 import { getJSONData } from "../../utils.js";
+import UserService from "../../service/userService.js";
 
 export default {
   name: "messageCreate",
@@ -10,17 +10,11 @@ export default {
     if(blacklistChannels.has(message.channel.id) || message.author.bot || message.type == 7) return;
 
     try {
-      const authorId = String(message.author.id);
-      const fetchedProfileData = await profileSchema.findOne({ userId: authorId });
+      const authorId = message.author.id;
+      const isUserExist = await UserService.isUserExist(authorId);
 
-      if(!fetchedProfileData) {
-        await profileSchema.create({ userId: authorId });
-      } else {
-        const filter = { userId: authorId };
-        const update = { $inc: { coins: 0.5 } };
-
-        await profileSchema.findOneAndUpdate(filter, update, { new: true });
-      }
+      if(!isUserExist) await UserService.create(authorId);
+      else await UserService.updateBalanceById(authorId, 0.5, "increment");
     } catch(err) {
       console.log("Error while fetching/updating user data", err);
     }

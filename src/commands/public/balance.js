@@ -1,5 +1,5 @@
 import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
-import profileSchema from "../../schema/profileSchema.js";
+import UserService from "../../service/userService.js";
 
 export default {
   data: new SlashCommandBuilder()
@@ -9,9 +9,7 @@ export default {
   async execute(interaction) {
     try {
       const authorId = interaction.user.id; 
-
-      const filter = { userId: authorId };
-      const { coins } = await profileSchema.findOne(filter);
+      const coins = await UserService.getBalanceById(authorId);
 
       const replyEmbed = new EmbedBuilder()
         .setTitle(`Баланс пользователя ${interaction.user.username}`)
