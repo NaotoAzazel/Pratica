@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, PermissionFlagsBits } from "discord.js";
-import UserService from "../../service/userService.js";
+import UserService from "../../service/UserService.js";
 
 export default {
   data: new SlashCommandBuilder()
