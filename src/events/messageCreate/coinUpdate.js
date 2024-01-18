@@ -13,7 +13,7 @@ export default {
       const authorId = message.author.id;
       const isUserExist = await UserService.isUserExist(authorId);
 
-      if(isUserExist) await UserService.create(authorId, 0.5);
+      if(!isUserExist) await UserService.create(authorId, 0.5);
       else await UserService.updateBalanceById(authorId, 0.5, "increment");
     } catch(err) {
       console.log("Error while fetching/updating user data", err);
