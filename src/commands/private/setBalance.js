@@ -24,15 +24,17 @@ export default {
     const targetUser = interaction.options.getUser("username");
     const coins = interaction.options.getInteger("coins");
 
-    await interaction.deferReply();
-    
     try {
       if(targetUser.bot) {
         return interaction.reply({ content: "Вы не можете выдать монет боту", ephemeral: true });
       }
+
+      if(UserService.isUserExist(targetUser.id)) {
+        UserService.create(targetUser.id, 0);
+      }
   
       await UserService.updateBalanceById(targetUser.id, coins, "set")
-      await interaction.editReply({ content: `Вы успешно выдали **${coins}** пользователю ${targetUser}`, ephemeral: true });
+      await interaction.reply({ content: `Вы успешно установили баланс **${coins}** :coin: пользователю ${targetUser}`, ephemeral: true });
     } catch(err) {
       interaction.reply({ content: `Произошла ошибка: ${err.message}`, ephemeral: true });
     }
