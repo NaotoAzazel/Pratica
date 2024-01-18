@@ -40,9 +40,7 @@ export default new class UserService {
   }
 
   async isUserExist(id) {
-    const filter = { userId: id };
-    const fetchedUser = await profileSchema.findOne(filter);
-
-    return fetchedUser || null;
+    const fetchedUser = await profileSchema.findOne({ userId: id });
+    return fetchedUser ? true : false;
   }
 }
