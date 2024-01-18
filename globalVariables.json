@@ -1,0 +1,8 @@
+{
+  "privateChannels": [
+    { "userId": "channelId" }
+  ],
+  "privateChannelPrice": 1000,
+  "customRolePrice": 1000,
+  "blacklistChannelIds": ["channelId"]
+}
