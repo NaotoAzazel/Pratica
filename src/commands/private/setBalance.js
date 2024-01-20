@@ -29,8 +29,8 @@ export default {
         return interaction.reply({ content: "Вы не можете выдать монет боту", ephemeral: true });
       }
 
-      if(UserService.isUserExist(targetUser.id)) {
-        UserService.create(targetUser.id, 0);
+      if(!await UserService.isUserExist(targetUser.id)) {
+        await UserService.create(targetUser.id, 0);
       }
   
       await UserService.updateBalanceById(targetUser.id, coins, "set")
