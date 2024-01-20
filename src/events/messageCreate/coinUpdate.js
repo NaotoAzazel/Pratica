@@ -5,7 +5,7 @@ export default {
   name: "messageCreate",
   once: false,
   async execute(message) {
-    const { blacklistChannelIds } = getJSONData("globalVariables.json");
+    const { blacklistChannelIds, coinsPerAction } = getJSONData("globalVariables.json");
     const blacklistChannels = new Set(blacklistChannelIds);
     if(blacklistChannels.has(message.channel.id) || message.author.bot || message.type == 7) return;
 
@@ -13,8 +13,8 @@ export default {
       const authorId = message.author.id;
       const isUserExist = await UserService.isUserExist(authorId);
 
-      if(!isUserExist) await UserService.create(authorId, 0.5);
-      else await UserService.updateBalanceById(authorId, 0.5, "increment");
+      if(!isUserExist) await UserService.create(authorId, coinsPerAction);
+      else await UserService.updateBalanceById(authorId, coinsPerAction, "increment");
     } catch(err) {
       console.log("Error while fetching/updating user data", err);
     }

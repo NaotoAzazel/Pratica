@@ -4,5 +4,6 @@
   ],
   "privateChannelPrice": 1000,
   "customRolePrice": 1000,
+  "coinsPerAction": 0.5,
   "blacklistChannelIds": ["channelId"]
 }
