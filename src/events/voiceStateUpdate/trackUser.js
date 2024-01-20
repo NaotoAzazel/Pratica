@@ -21,20 +21,23 @@ export default {
   
     if (!newChannelId && oldChannelId) {
       if (userInVoiceChannelMap.has(userId)) {
-        const startTime = userInVoiceChannelMap.get(userId).startTime;
-        const endTime = Date.now();
-        const timeInVoiceChannelInSeconds = (endTime - startTime) / 1000;
-
-        const coinsEarned = timeInVoiceChannelInSeconds * coinsPerSecondinVoice;
-        const isUserExists = await UserService.isUserExist(userId);
-
-        if(!isUserExists) {
-          await UserService.create(userId);
+        try {
+          const startTime = userInVoiceChannelMap.get(userId).startTime;
+          const endTime = Date.now();
+          const timeInVoiceChannelInSeconds = (endTime - startTime) / 1000;
+  
+          const coinsEarned = timeInVoiceChannelInSeconds * coinsPerSecondinVoice;
+          const isUserExists = await UserService.isUserExist(userId);
+  
+          if(!isUserExists) {
+            await UserService.create(userId);
+          }
+  
+          await UserService.updateBalanceById(userId, Math.round(coinsEarned), "increment");
+          userInVoiceChannelMap.delete(userId);
+        } catch(err) {
+          console.log("Error:", err.message);
         }
-
-        await UserService.updateBalanceById(userId, coinsEarned, "increment");
-
-        userInVoiceChannelMap.delete(userId);
       }
     }
   }
