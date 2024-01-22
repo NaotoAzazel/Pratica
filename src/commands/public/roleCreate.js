@@ -132,7 +132,8 @@ export default {
                 .setDescription(`Роль <@&${createdRole.id}> была выдана пользователю <@${interaction.user.id}>\nВерифицировал роль: <@${buttonInteraction.user.id}>`)
                 .setColor("Green")
                 .setFields([])
-  
+              
+              await UserService.updateBalanceById(interaction.user.id, customRolePrice, "decrement");
               await buttonInteraction.update({ embeds: [logEmbed], components: [] });
             } catch(err) {
               console.log(err);
