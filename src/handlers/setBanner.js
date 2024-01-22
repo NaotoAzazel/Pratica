@@ -3,12 +3,13 @@ import Canvas from "canvas";
 function createBanner(client) {
   console.log("Start creating banner");
 
+  const { GUILD_ID: guildId } = process.env;
+  const guild = client.guilds.cache.get(guildId);
+
   try {
     async function banner() {
-      const { GUILD_ID: guildId } = process.env;
-      const guild = client.guilds.cache.get(guildId);
       const memberCount = guild.memberCount;
-      const membersInVoice = 0;
+      let membersInVoice = 0;
 
       voiceChannel
         .filter((x) => x.type === 2)
