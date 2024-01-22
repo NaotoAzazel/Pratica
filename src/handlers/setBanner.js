@@ -9,6 +9,7 @@ function createBanner(client) {
   try {
     async function banner() {
       const memberCount = guild.memberCount;
+      const voiceChannel = await guild.channels.fetch();
       let membersInVoice = 0;
 
       voiceChannel
