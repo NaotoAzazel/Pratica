@@ -56,7 +56,7 @@ export default {
 
     try {
       const userBalance = UserService.getBalanceById(interaction.user.id);
-      const existingRole = guild.roles.cache.find(role => role.name === roleName);
+      const existingRole = interaction.guild.roles.cache.find(role => role.name === roleName);
 
       const { customRolePrice } = getJSONData("globalVariables.json");
 
@@ -117,21 +117,26 @@ export default {
 
         switch(customId) {
           case "conf": {
-            const createdRole = await interaction.guild.roles.create({ name: roleName, color });
-            
-            if(attachment?.attachment && interaction.guild.premiumTier >= 2) {
-              createdRole.setIcon(attachment.attachment);
+            try {
+              const role = interaction.guild.roles.cache.find(role => role.id === "1195458389489229964");
+              const createdRole = await interaction.guild.roles.create({ name: roleName, color, position: role.position + 1, });
+              
+              if(attachment?.attachment && interaction.guild.premiumTier >= 2) {
+                createdRole.setIcon(attachment.attachment);
+              }
+  
+              await interaction.member.roles.add(createdRole.id);
+  
+              logEmbed
+                .setTitle("Верификация успешна")
+                .setDescription(`Роль <@&${createdRole.id}> была выдана пользователю <@${interaction.user.id}>\nВерифицировал роль: <@${buttonInteraction.user.id}>`)
+                .setColor("Green")
+                .setFields([])
+  
+              await buttonInteraction.update({ embeds: [logEmbed], components: [] });
+            } catch(err) {
+              console.log(err);
             }
-
-            await interaction.member.roles.add(createdRole.id);
-
-            logEmbed
-              .setTitle("Верификация успешна")
-              .setDescription(`Роль <@&${createdRole.id}> была выдана пользователю <@${interaction.user.id}>\nВерифицировал роль: <@${buttonInteraction.user.id}>`)
-              .setColor("Green")
-              .setFields([])
-
-            await buttonInteraction.update({ embeds: [logEmbed], components: [] });
           }
         }
       })
