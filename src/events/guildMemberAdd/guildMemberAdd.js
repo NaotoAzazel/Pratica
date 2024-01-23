@@ -1,11 +1,16 @@
-import UserService from "../../service/UserService.js";
+import UserController from "../../controller/UserController.js";
 
 export default {
   name: "guildMemberAdd",
   async execute(member) {
     if(member?.user?.bot) return;
 
-    if(await UserService.isUserExist(member?.user?.id)) return;
-    else await UserService.create(member?.user?.id);
+    try {
+      const isUserExist = await UserController.isUserExist(member?.user?.id);
+      if(isUserExist) return;
+      else await UserController.create(member?.user?.id);
+    } catch (err) {
+      console.error(`Error in guildMemberAdd event: ${err.message}`);
+    }
   }
 }

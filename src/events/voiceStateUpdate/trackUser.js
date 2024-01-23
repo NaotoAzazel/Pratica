@@ -1,5 +1,5 @@
 import { getJSONData } from "../../utils.js";
-import UserService from "../../service/UserService.js";
+import UserController from "../../controller/UserController.js";
 
 const userInVoiceChannelMap = new Map();
 
@@ -27,16 +27,16 @@ export default {
           const timeInVoiceChannelInSeconds = (endTime - startTime) / 1000;
   
           const coinsEarned = timeInVoiceChannelInSeconds * coinsPerSecondinVoice;
-          const isUserExists = await UserService.isUserExist(userId);
+          const isUserExists = await UserController.isUserExist(userId);
   
           if(!isUserExists) {
-            await UserService.create(userId);
+            await UserController.create(userId);
           }
   
-          await UserService.updateBalanceById(userId, Math.round(coinsEarned), "increment");
+          await UserController.updateBalanceById(userId, Math.round(coinsEarned), "increment");
           userInVoiceChannelMap.delete(userId);
         } catch(err) {
-          console.log("Error:", err.message);
+          console.error("Error in voiceStateUpdate event:", err.message);
         }
       }
     }

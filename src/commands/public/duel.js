@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, SlashCommandBuilder } from "discord.js";
-import UserService from "../../service/UserService.js";
+import UserController from "../../controller/UserController.js";
 
 export default {
   data: new SlashCommandBuilder()
@@ -28,47 +28,47 @@ export default {
       return interaction.reply({ content: "Вы не можете отправить дуэль самому себе или боту", ephemeral: true });
     }
 
-    const enemyBalance = await UserService.getBalanceById(targetUser.id);
-    const ownBalance = await UserService.getBalanceById(ownId);
-
-    if(duelCoins > enemyBalance) {
-      return interaction.reply({ 
-        content: "Вы не можете отправить дуэль. У противника нет столько монет", 
-        ephemeral: true 
-      });
-    }
-
-    if(duelCoins > ownBalance) {
-      return interaction.reply({ 
-        content: "Вы не можете отправить дуэль. На вашем счету недостаточно монет.", 
-        ephemeral: true
-      });
-    }
-
-    const percentageIncrease = 100;
-    const increasedAmount = duelCoins * (1 + percentageIncrease / 100);
-    
-    const duelEmbed = new EmbedBuilder()
-      .setTitle("Дуэль")
-      .setDescription(`<@${ownId}> vs ${targetUser}\nСтавка дуэли: **${duelCoins}** :coin:\nПобедитель получил **100%** от ставки на баланс(**+${increasedAmount}**)`)
-      .setColor("Blue")
-      .setFooter({ text: "От дуэли можно отказаться или принять нажав ниже" })
-      .setTimestamp()
-
-    const confirm = new ButtonBuilder()
-      .setCustomId(`confirm-duel-${targetUser}-${duelCoins}`)
-      .setLabel("Принять")
-      .setStyle(ButtonStyle.Success)
-      
-    const cancel = new ButtonBuilder()
-      .setCustomId(`cancel-duel-${targetUser}-${duelCoins}`)
-      .setLabel("Отказаться")
-      .setStyle(ButtonStyle.Danger)
-      
-    const row = new ActionRowBuilder()
-      .addComponents(confirm, cancel);
-    
     try {
+      const enemyBalance = await UserController.getBalanceById(targetUser.id);
+      const ownBalance = await UserController.getBalanceById(ownId);
+
+      if(duelCoins > enemyBalance) {
+        return interaction.reply({ 
+          content: "Вы не можете отправить дуэль. У противника нет столько монет", 
+          ephemeral: true 
+        });
+      }
+
+      if(duelCoins > ownBalance) {
+        return interaction.reply({ 
+          content: "Вы не можете отправить дуэль. На вашем счету недостаточно монет.", 
+          ephemeral: true
+        });
+      }
+
+      const percentageIncrease = 100;
+      const increasedAmount = duelCoins * (1 + percentageIncrease / 100);
+      
+      const duelEmbed = new EmbedBuilder()
+        .setTitle("Дуэль")
+        .setDescription(`<@${ownId}> vs ${targetUser}\nСтавка дуэли: **${duelCoins}** :coin:\nПобедитель получил **100%** от ставки на баланс(**+${increasedAmount}**)`)
+        .setColor("Blue")
+        .setFooter({ text: "От дуэли можно отказаться или принять нажав ниже" })
+        .setTimestamp()
+
+      const confirm = new ButtonBuilder()
+        .setCustomId(`confirm-duel-${targetUser}-${duelCoins}`)
+        .setLabel("Принять")
+        .setStyle(ButtonStyle.Success)
+        
+      const cancel = new ButtonBuilder()
+        .setCustomId(`cancel-duel-${targetUser}-${duelCoins}`)
+        .setLabel("Отказаться")
+        .setStyle(ButtonStyle.Danger)
+        
+      const row = new ActionRowBuilder()
+        .addComponents(confirm, cancel);
+    
       const reply = await interaction.reply({ 
         content: `${targetUser}, вас вызвал(а) на дуэль <@${ownId}>.`,
         embeds: [duelEmbed],
@@ -93,8 +93,8 @@ export default {
           result = `Победил **${username}**, с числом **${randomNumber1}**.`;
           
           await Promise.all([
-            UserService.updateBalanceById(ownId, duelCoins, "increment"),
-            UserService.updateBalanceById(targetUser.id, duelCoins, "decrement"),
+            UserController.updateBalanceById(ownId, duelCoins, "increment"),
+            UserController.updateBalanceById(targetUser.id, duelCoins, "decrement"),
           ]);
         } else if(randomNumber1 == randomNumber2) {
           result = `**Ничья**, оба числа равны.`
@@ -102,8 +102,8 @@ export default {
           result = `Победил **${targetUser.username}**, с числом **${randomNumber2}**.`;
 
           await Promise.all([
-            UserService.updateBalanceById(ownId, duelCoins, "decrement"),
-            UserService.updateBalanceById(targetUser.id, duelCoins, "increment"),
+            UserController.updateBalanceById(ownId, duelCoins, "decrement"),
+            UserController.updateBalanceById(targetUser.id, duelCoins, "increment"),
           ]);
         } 
 

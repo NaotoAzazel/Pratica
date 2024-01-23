@@ -1,5 +1,5 @@
 import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
-import UserService from "../../service/UserService.js";
+import UserController from "../../controller/UserController.js";
 
 export default {
   data: new SlashCommandBuilder()
@@ -18,7 +18,7 @@ export default {
       .setThumbnail(interaction.guild.iconURL())
 
     try {
-      const users = await UserService.getUsersSortedByCoins();
+      const users = await UserController.getUsersSortedByCoins();
       
       const usersIndex = users.findIndex((member) => member.userId === id);
       leaderboardEmbed.setDescription(`**${username}**, ваша позиция в топе: **${usersIndex + 1}**`);

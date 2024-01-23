@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder, EmbedBuilder } from "discord.js";
-import UserService from "../../service/UserService.js";
+import UserController from "../../controller/UserController.js";
 import { getJSONData } from "../../utils.js";
 
 export default {
@@ -14,7 +14,7 @@ export default {
     ];
 
     try {
-      const coins = await UserService.getBalanceById(interaction.user.id);
+      const coins = await UserController.getBalanceById(interaction.user.id);
 
       const shopEmbed = new EmbedBuilder()
         .setTitle(`Магазин товаров ${interaction.member.guild.name}`)
@@ -79,17 +79,5 @@ async function buyOwnVoiceRoom(interaction, coins) {
     .setColor(2829617)
     .setFooter({ text: isCanBuy ? null : "У вас недостаточно монет для покупки личной комнаты" })
 
-  await interaction.reply({ embeds: [replyEmbed], components: [row], ephemeral: true });
-}
-
-async function hasPrivateRoom(id) {
-  const { privateChannels } = getJSONData("globalVariables.json");
-  
-  privateChannels.forEach((obj) => {
-    for (const [key] of Object.entries(obj)) {
-      if(id === key) return true;
-    }
-  });
-
-  return false;
+  await interaction.reply({ embeds: [replyEmbed], ephemeral: true });
 }

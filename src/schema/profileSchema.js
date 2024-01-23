@@ -13,4 +13,4 @@ const profileSchema = new mongoose.Schema({
   }
 });
 
-export default mongoose.model("PraticaDB", profileSchema);
+export default mongoose.model("users", profileSchema);

@@ -6,10 +6,8 @@ export default new class UserService {
     await profileSchema.create({ userId, coins });
   }
 
-  async getBalanceById(id) {
-    const filter = { userId: id };
-    const fetchedUser = await profileSchema.findOne(filter);
-
+  async getBalanceById(userId) {
+    const fetchedUser = await profileSchema.findOne({ userId });
     return fetchedUser?.coins;
   }
 
@@ -22,10 +20,7 @@ export default new class UserService {
     return users;
   }
 
-  /**
-   * @param {string} [operationType='increment'] - Тип операции ("increment", "set", "decrement")
-  */
-  async updateBalanceById(id, amount, operationType = "increment") {
+  async updateBalanceById(id, amount, operationType) {
     const filter = { userId: id };
 
     let update;
@@ -39,8 +34,8 @@ export default new class UserService {
     await profileSchema.findOneAndUpdate(filter, update, { new: true });
   }
 
-  async isUserExist(id) {
-    const fetchedUser = await profileSchema.findOne({ userId: id });
+  async isUserExist(userId) {
+    const fetchedUser = await profileSchema.findOne({ userId });
     return fetchedUser ? true : false;
   }
 }

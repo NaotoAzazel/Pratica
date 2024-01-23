@@ -1,5 +1,5 @@
 import { EmbedBuilder, SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } from "discord.js";
-import UserService from "../../service/UserService.js";
+import UserController from "../../controller/UserController.js";
 import { getJSONData } from "../../utils.js";
 
 export default {
@@ -55,7 +55,7 @@ export default {
     const color = interaction.options.getString("цвет");
 
     try {
-      const userBalance = UserService.getBalanceById(interaction.user.id);
+      const userBalance = UserController.getBalanceById(interaction.user.id);
       const existingRole = interaction.guild.roles.cache.find(role => role.name === roleName);
 
       const { customRolePrice } = getJSONData("globalVariables.json");
@@ -133,7 +133,7 @@ export default {
                 .setColor("Green")
                 .setFields([])
               
-              await UserService.updateBalanceById(interaction.user.id, customRolePrice, "decrement");
+              await UserController.updateBalanceById(interaction.user.id, customRolePrice, "decrement");
               await buttonInteraction.update({ embeds: [logEmbed], components: [] });
             } catch(err) {
               console.log(err);

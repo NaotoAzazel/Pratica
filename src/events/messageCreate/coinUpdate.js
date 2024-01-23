@@ -1,5 +1,5 @@
 import { getJSONData } from "../../utils.js";
-import UserService from "../../service/UserService.js";
+import UserController from "../../controller/UserController.js";
 
 export default {
   name: "messageCreate",
@@ -11,12 +11,12 @@ export default {
 
     try {
       const authorId = message.author.id;
-      const isUserExist = await UserService.isUserExist(authorId);
+      const isUserExist = await UserController.isUserExist(authorId);
 
-      if(!isUserExist) await UserService.create(authorId, coinsPerAction);
-      else await UserService.updateBalanceById(authorId, coinsPerAction, "increment");
+      if(!isUserExist) await UserController.create(authorId, coinsPerAction);
+      else await UserController.updateBalanceById(authorId, coinsPerAction, "increment");
     } catch(err) {
-      console.log("Error while fetching/updating user data", err);
+      console.error("Error while fetching/updating user data", err.message);
     }
   }
 }
