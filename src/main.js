@@ -3,6 +3,7 @@ dotenv.config()
 
 import loadEvents from "./handlers/eventHandler.js";
 import loadCommands from './handlers/slashCommands.js';
+import createBanner from './handlers/setBanner.js';
 import { setupMongoose } from "./utils.js";
 
 const { TOKEN: token, MONGO_URL: mongoUrl } = process.env;
@@ -14,6 +15,7 @@ export const client = new Client({
     GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildVoiceStates
   ],
 });
 
@@ -21,6 +23,7 @@ client.commands = new Collection();
 
 client.login(token).then(() => {
   setupMongoose(mongoUrl);
+  createBanner(client);
   loadEvents(client);
   loadCommands(client);
 });

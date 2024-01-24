@@ -1,5 +1,5 @@
 import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
-import UserService from "../../service/UserService.js";
+import UserController from "../../controller/UserController.js";
 
 export default {
   data: new SlashCommandBuilder()
@@ -9,7 +9,7 @@ export default {
   async execute(interaction) {
     try {
       const authorId = interaction.user.id; 
-      const coins = await UserService.getBalanceById(authorId);
+      const coins = await UserController.getBalanceById(authorId);
 
       const replyEmbed = new EmbedBuilder()
         .setTitle(`Баланс пользователя ${interaction.user.username}`)

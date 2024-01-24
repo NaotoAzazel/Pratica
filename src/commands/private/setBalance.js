@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, PermissionFlagsBits } from "discord.js";
-import UserService from "../../service/UserService.js";
+import UserController from "../../controller/UserController.js";
 
 export default {
   data: new SlashCommandBuilder()
@@ -24,15 +24,18 @@ export default {
     const targetUser = interaction.options.getUser("username");
     const coins = interaction.options.getInteger("coins");
 
-    await interaction.deferReply();
-    
     try {
       if(targetUser.bot) {
         return interaction.reply({ content: "Вы не можете выдать монет боту", ephemeral: true });
       }
+
+      const isUserExist = await UserController.isUserExist(targetUser.id);
+      if(!isUserExist) {
+        await UserController.create(targetUser.id, 0);
+      }
   
-      await UserService.updateBalanceById(targetUser.id, coins, "set")
-      await interaction.editReply({ content: `Вы успешно выдали **${coins}** пользователю ${targetUser}`, ephemeral: true });
+      await UserController.updateBalanceById(targetUser.id, coins, "set")
+      await interaction.reply({ content: `Вы успешно установили баланс **${coins}** :coin: пользователю ${targetUser}`, ephemeral: true });
     } catch(err) {
       interaction.reply({ content: `Произошла ошибка: ${err.message}`, ephemeral: true });
     }

@@ -1,0 +1,8 @@
+{
+  "privateChannelPrice": 1000,
+  "voiceChannelsCategoryId": "categoryId",
+  "customRolePrice": 1000,
+  "coinsPerAction": 0.5,
+  "coinsPerSecondinVoice": 0.5,
+  "blacklistChannelIds": ["channelId"]
+}
