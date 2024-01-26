@@ -9,12 +9,12 @@ export default {
 
   async execute(interaction) {
     const products = [
-      { name: "Роли", description: "Роли с неограниченым сроком действия", emoji: "⭐" },
-      { name: "Личная комната", description: "(**Work in progress**)\nСобственный, настраиваемый голосовой канал", emoji: "🎤" },
+      { name: "Кастомная роль", description: "Роли с неограниченым сроком действия", emoji: "⭐" },
+      { name: "Личная комната", description: "Собственный, настраиваемый голосовой канал", emoji: "🎤" },
     ];
 
     try {
-      const coins = await UserController.getBalanceById(interaction.user.id);
+      let coins = await UserController.getBalanceById(interaction.user.id);
 
       const shopEmbed = new EmbedBuilder()
         .setTitle(`Магазин товаров ${interaction.member.guild.name}`)
@@ -45,39 +45,44 @@ export default {
       collector.on("collect", async (buttonInteraction) => {
         const { customId } = buttonInteraction;
 
-        switch(customId) {
-          case "Роли": return buyCustomRole(buttonInteraction, coins);
-          case "Личная комната": return buyOwnVoiceRoom(buttonInteraction, coins);
+        const { customRolePrice, privateChannelPrice, voiceChannelsCategoryId } = getJSONData("globalVariables.json");
+        coins = await UserController.getBalanceById(interaction.user.id);
+
+        const messageTemplates  = {
+          "Кастомная роль": `${interaction.user}, **кастомная роль** предоставляет вам уникальную роль, для который вы сами можете выбрать цвет, название и иконку. Пожалуйста, удостоверьтесь, что **название роли** соответствует правилам и **не содержит нецензурных или оскорбительных выражений**. Один пользователь **может иметь только одну кастомную роль.**\n\n**Ваш баланс: ${coins}  :coin:**\nЁё можна приобрести командой \`\`/role create\`\``,
+          "Личная комната": `${interaction.user}, **личная комната** предоставляется в категорию <#${voiceChannelsCategoryId}> со своим личным голосовым каналом. Вы можете им **управлять: переиминовывать, скрывать, показывать, удалить, добавить пользователя, удалить пользователя и задать лимит пользователей** - все это выполняется командой **/voice configure**. Один пользователь **может иметь только одну личную комнату.**\n\n**Ваш баланс: ${coins}  :coin:**\nЁё можна приобрести командой \`\`/voice buy\`\``
+        };
+
+        const prices = {
+          "Кастомная роль": customRolePrice,
+          "Личная комната": privateChannelPrice,
+        };
+
+        const isCanBuy = coins >= prices[customId];
+
+        const replyEmbed = new EmbedBuilder()
+          .setTitle(customId)
+          .setDescription(messageTemplates[customId])
+          .setThumbnail(interaction.user.displayAvatarURL())
+          .setFooter({ text: !isCanBuy ? "У вас недостаточно монет для покупки" : null })
+          .setColor(2829617)
+
+        try {
+          switch(customId) {
+            case "Кастомная роль": {
+              return await buttonInteraction.reply({ embeds: [replyEmbed], ephemeral: true });
+            }
+
+            case "Личная комната": {
+              return await buttonInteraction.reply({ embeds: [replyEmbed], ephemeral: true });
+            }
+          }
+        } catch(err) {
+          console.error("Error in shop command(button interaction):", err.message);
         }
       });
     } catch(err) {
-      console.log(err);
+      console.log("Error in shop command:", err.message);
     }
   }
-}
-
-async function buyCustomRole(interaction, coins) {
-  const { customRolePrice } = getJSONData("globalVariables.json");
-  const isCanBuy = coins >= customRolePrice;
-
-  const replyEmbed = new EmbedBuilder()
-    .setTitle("Кастомная роль")
-    .setDescription(`${interaction.user}, кастомная роль предостваляет...\n\n**Ваш баланс: ${coins}  :coin:**\nЁё можна приобрести командой \`\`/role create\`\``)
-    .setFooter({ text: isCanBuy ? null : "У вас недостаточно монет для покупки личной комнаты" })
-    .setColor(2829617)
-
-  await interaction.reply({ embeds: [replyEmbed], ephemeral: true });
-}
-
-async function buyOwnVoiceRoom(interaction, coins) {
-  const { privateChannelPrice } = getJSONData("globalVariables.json");
-  const isCanBuy = coins >= privateChannelPrice;
-
-  const replyEmbed = new EmbedBuilder()
-    .setTitle("Личная комната")
-    .setDescription(`${interaction.user}, личная комната предоставляет...\n\n**Ваш баланс: ${coins}  :coin:**`)
-    .setColor(2829617)
-    .setFooter({ text: isCanBuy ? null : "У вас недостаточно монет для покупки личной комнаты" })
-
-  await interaction.reply({ embeds: [replyEmbed], ephemeral: true });
 }
