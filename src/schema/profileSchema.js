@@ -10,6 +10,16 @@ const profileSchema = new mongoose.Schema({
     type: Number,
     require: true,
     default: 0
+  },
+  totalCoinsEarned: {
+    type: Number,
+    require: true,
+    default: 0
+  },
+  totalCoinsSpent: {
+    type: Number,
+    require: true,
+    default: 0
   }
 });
 
