@@ -4,5 +4,6 @@
   "customRolePrice": 1000,
   "coinsPerAction": 0.5,
   "coinsPerSecondinVoice": 0.5,
-  "blacklistChannelIds": ["channelId"]
+  "blacklistChannelIds": ["channelId"],
+  "jarRoleId": "roleId"
 }
