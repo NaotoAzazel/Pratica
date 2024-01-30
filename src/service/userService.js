@@ -1,14 +1,20 @@
 import profileSchema from "../schema/profileSchema.js";
 
 export default new class UserService {
-  async create(userId, coins = 0) {
+  async create(userId, coins = 0, totalCoinsEarned = 0.5, totalCoinsSpent = 0) {
     if(!userId) throw new Error("No user id specified");
-    await profileSchema.create({ userId, coins });
+    await profileSchema.create({ userId, coins, totalCoinsEarned, totalCoinsSpent });
   }
 
   async getBalanceById(userId) {
     const fetchedUser = await profileSchema.findOne({ userId });
     return fetchedUser?.coins;
+  }
+
+  async getStatisticsById(userId) {
+    const fetchedUser = await profileSchema.findOne({ userId });
+    const { totalCoinsEarned, totalCoinsSpent } = fetchedUser || {};
+    return { totalCoinsEarned, totalCoinsSpent };
   }
 
   async getUsersSortedByCoins() {
@@ -21,16 +27,23 @@ export default new class UserService {
   }
 
   async updateBalanceById(id, amount, operationType) {
-    const filter = { userId: id };
-
-    let update;
-    switch(operationType) {
-      case "increment": update = { $inc: { coins: amount } }; break;
-      case "decrement": update = { $inc: { coins: -amount } }; break;
-      case "set": update = { coins: amount }; break;
-      default: throw new Error('Invalid operation type');
+    if (!id || !amount || !operationType) {
+      throw new Error("Missing required parameters");
     }
-
+  
+    const filter = { userId: id };
+    const updateOptions = {
+      increment: { $inc: { coins: amount, totalCoinsEarned: amount } },
+      decrement: { $inc: { coins: -amount, totalCoinsSpent: amount } },
+      set: { coins: amount, totalCoinsEarned: amount },
+    };
+  
+    const update = updateOptions[operationType];
+  
+    if (!update) {
+      throw new Error('Invalid operation type');
+    }
+  
     await profileSchema.findOneAndUpdate(filter, update, { new: true });
   }
 

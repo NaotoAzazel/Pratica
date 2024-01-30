@@ -17,6 +17,14 @@ class UserController {
     }
   }
 
+  async getStatisticsById(id) {
+    try {
+      return await UserService.getStatisticsById(id);
+    } catch(err) {
+      throw err;
+    }
+  }
+
   async getUsersSortedByCoins() {
     try {
       return await UserService.getUsersSortedByCoins();

@@ -8,15 +8,16 @@ export default {
   
   async execute(interaction) {
     try {
-      const authorId = interaction.user.id; 
-      const coins = await UserController.getBalanceById(authorId);
+      const { id, username } = interaction.user; 
+      const coins = await UserController.getBalanceById(id);
+      const { totalCoinsEarned, totalCoinsSpent } = await UserController.getStatisticsById(id);
 
       const replyEmbed = new EmbedBuilder()
-        .setTitle(`Баланс пользователя ${interaction.user.username}`)
-        .setDescription(`**Наличные**: ${coins}`)
+        .setTitle(`Баланс пользователя ${username}`)
+        .setDescription(`**Наличные**: ${coins} :coin:\n\n**Всего монет заработано:** ${totalCoinsEarned} :coin:\n**Всего монет потрачено:** ${totalCoinsSpent} :coin:`)
         .setColor(2829617)
         .setThumbnail(interaction.user.displayAvatarURL())
-        .setFooter({ text: "Pratica" })
+        .setFooter({ text: interaction.guild.name })
         .setTimestamp()
 
       await interaction.reply({ embeds: [replyEmbed] });
